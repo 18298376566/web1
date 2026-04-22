@@ -1,753 +1,3044 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>游戏枢纽 - 玩游+聊游一体化平台</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
-        }
-        body {
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        /* 公共容器 */
-        .container {
-            width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        /* 顶部导航栏（融合Steam分发+TapTap社区入口） */
-        .header {
-            background-color: #1a1a1a;
-            color: #fff;
-            padding: 16px 0;
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff6b6b;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .logo i {
-            font-size: 28px;
-        }
-        .nav {
-            display: flex;
-            gap: 30px;
-        }
-        .nav a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
-        .nav a:hover, .nav a.active {
-            color: #ff6b6b;
-        }
-        .search-bar {
-            width: 280px;
-            position: relative;
-        }
-        .search-bar input {
-            width: 100%;
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-        }
-        .user-opt {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .user-opt a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .login-btn {
-            padding: 6px 16px;
-            border: 1px solid #ff6b6b;
-            border-radius: 20px;
-            color: #ff6b6b !important;
-            transition: all 0.3s;
-        }
-        .login-btn:hover {
-            background-color: #ff6b6b;
-            color: #fff !important;
-        }
-
-        /* 轮播Banner（新游+社区热门内容） */
-        .banner {
-            height: 400px;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("https://via.placeholder.com/1200x400") no-repeat center center;
-            background-size: cover;
-            margin: 20px 0;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            padding: 0 60px;
-            color: #fff;
-        }
-        .banner-content h2 {
-            font-size: 36px;
-            margin-bottom: 16px;
-        }
-        .banner-content p {
-            font-size: 18px;
-            margin-bottom: 24px;
-            max-width: 600px;
-        }
-        .banner-btn {
-            display: flex;
-            gap: 20px;
-        }
-        .banner-btn a {
-            padding: 10px 24px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        .download-btn {
-            background-color: #ff6b6b;
-            color: #fff;
-        }
-        .community-btn {
-            background-color: transparent;
-            border: 1px solid #fff;
-            color: #fff;
-        }
-        .banner-btn a:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        /* 核心板块标题 */
-        .section-title {
-            font-size: 22px;
-            font-weight: bold;
-            margin: 30px 0 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .section-title::before {
-            content: "";
-            width: 4px;
-            height: 24px;
-            background-color: #ff6b6b;
-            border-radius: 2px;
-        }
-
-        /* 游戏库板块（Steam式分发，关联社区） */
-        .game-library {
-            margin-bottom: 40px;
-        }
-        .game-filter {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            padding: 6px 16px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .filter-btn:hover, .filter-btn.active {
-            background-color: #ff6b6b;
-            color: #fff;
-            border-color: #ff6b6b;
-        }
-        .game-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-        .game-card {
-            background-color: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: all 0.3s;
-        }
-        .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .game-img {
-            width: 100%;
-            height: 130px;
-            background-color: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-        }
-        .game-info {
-            padding: 15px;
-        }
-        .game-name {
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .game-meta {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .game-score {
-            color: #ffb800;
-            font-weight: bold;
-        }
-        .game-community {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .game-btn {
-            display: flex;
-            gap: 10px;
-        }
-        .game-btn a {
-            flex: 1;
-            text-align: center;
-            padding: 6px 0;
-            border-radius: 4px;
-            font-size: 14px;
-            text-decoration: none;
-        }
-        .play-btn {
-            background-color: #ff6b6b;
-            color: #fff;
-        }
-        .community-link {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-
-        /* 社区板块（TapTap式互动，关联游戏） */
-        .community-section {
-            margin-bottom: 40px;
-        }
-        .community-content {
-            display: flex;
-            gap: 20px;
-        }
-        .community-left {
-            flex: 2;
-        }
-        .post-card {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #ddd;
-        }
-        .user-info {
-            flex: 1;
-        }
-        .user-name {
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .post-time {
-            font-size: 12px;
-            color: #666;
-        }
-        .post-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .post-content {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-        .post-game {
-            display: inline-block;
-            padding: 4px 10px;
-            background-color: #f0f0f0;
-            border-radius: 15px;
-            font-size: 12px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .post-opt {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-size: 12px;
-            color: #666;
-        }
-        .post-opt span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-
-        .community-right {
-            flex: 1;
-        }
-        .community-hot {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 15px;
-        }
-        .hot-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .hot-game {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .hot-game-img {
-            width: 50px;
-            height: 50px;
-            background-color: #ddd;
-            border-radius: 4px;
-        }
-        .hot-game-info {
-            flex: 1;
-        }
-        .hot-game-name {
-            font-size: 14px;
-            font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .hot-game-count {
-            font-size: 12px;
-            color: #666;
-        }
-
-        /* 底部 */
-        .footer {
-            background-color: #1a1a1a;
-            color: #fff;
-            padding: 40px 0;
-            margin-top: 60px;
-        }
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
-        .footer-col {
-            flex: 1;
-            min-width: 200px;
-        }
-        .footer-col h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        .footer-col h3::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 40px;
-            height: 2px;
-            background-color: #ff6b6b;
-        }
-        .footer-col ul {
-            list-style: none;
-        }
-        .footer-col ul li {
-            margin-bottom: 10px;
-        }
-        .footer-col ul li a {
-            color: #ccc;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        .footer-col ul li a:hover {
-            color: #ff6b6b;
-        }
-        .copyright {
-            text-align: center;
-            padding-top: 30px;
-            margin-top: 30px;
-            border-top: 1px solid #333;
-            font-size: 14px;
-            color: #ccc;
-        }
-
-        /* 适配移动端 */
-        @media (max-width: 1200px) {
-            .container {
-                width: 100%;
-            }
-        }
-        @media (max-width: 768px) {
-            .nav {
-                display: none;
-            }
-            .search-bar {
-                width: 180px;
-            }
-            .banner {
-                height: 250px;
-                padding: 0 20px;
-            }
-            .banner-content h2 {
-                font-size: 24px;
-            }
-            .banner-content p {
-                font-size: 14px;
-            }
-            .community-content {
-                flex-direction: column;
-            }
-            .game-list {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>游戏中心 - 原型图</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: {
+            'fade-in': 'fadeIn 0.3s ease-in-out',
+            'slide-up': 'slideUp 0.4s ease-out',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'zoom-in': 'zoomIn 7s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            zoomIn: {
+              '0%': { transform: 'scale(1.05)' },
+              '100%': { transform: 'scale(1.15)' },
+            },
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto { content-visibility: auto; }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .btn-hover {
+        transition: all 0.3s ease;
+      }
+      .btn-hover:hover {
+        transform: scale(1.05);
+      }
+      .scrollbar-custom::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .scrollbar-custom::-webkit-scrollbar-track {
+        background: #1f2937;
+      }
+      .scrollbar-custom::-webkit-scrollbar-thumb {
+        background: #4b5563;
+        border-radius: 4px;
+      }
+      .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+        background: #6b7280;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .gradient-overlay {
+        background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+      }
+    }
+  </style>
 </head>
-&lt;body&gt;
-    <!-- 顶部导航栏 -->
-    <header class="header">
-        <div class="container header-content">
-            <a href="#" class="logo"><i class="fas fa-gamepad"></i>游戏枢纽</a>
-            <nav class="nav">
-                <a href="#" class="active">首页</a>
-                <a href="#">游戏库</a>
-                <a href="#">社区</a>
-                <a href="#">资讯攻略</a>
-                <a href="#">礼包中心</a>
-                <a href="#">开发者中心</a>
-            </nav>
-            <div class="search-bar">
-                <input type="text" placeholder="搜索游戏、攻略、玩家...">
-            </div>
-            <div class="user-opt">
-                <a href="#">个人中心</a>
-                <a href="#" class="login-btn">登录/注册</a>
-            </div>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white font-inter transition-colors duration-300">
+  <!-- 导航栏 -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-md dark:shadow-lg transition-all duration-300">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-wrap justify-between items-center py-4">
+        <!-- Logo 和主导航 -->
+        <div class="flex items-center space-x-8">
+          <a href="#home" class="text-2xl font-bold text-blue-600 dark:text-blue-400 flex items-center">
+            <i class="fa fa-gamepad mr-2"></i>
+            <span>游戏中心</span>
+          </a>
+          <ul class="hidden md:flex space-x-6">
+            <li><a href="#home" class="hover:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 font-medium">首页</a></li>
+            <li><a href="#games" class="hover:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 font-medium">游戏库</a></li>
+            <li><a href="#news" class="hover:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 font-medium">资讯</a></li>
+            <li><a href="#community" class="hover:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 font-medium">社区</a></li>
+            <li><a href="#events" class="hover:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 font-medium">赛事</a></li>
+          </ul>
         </div>
-    </header>
-
-    &lt;div class="container"&gt;
-        <!-- 轮播Banner -->
-        <div class="banner">
-            <div class="banner-content">
-                <h2>新游首发 · 社区同玩</h2>
-                <p>一站式体验优质游戏，与千万玩家交流攻略、分享心得，打造玩游+聊游一体化平台</p>
-                <div class="banner-btn">
-                    <a href="#" class="download-btn">浏览游戏库</a>
-                    <a href="#" class="community-btn">进入社区</a>
-                </div>
+        
+        <!-- 搜索、主题切换和用户 -->
+        <div class="flex items-center space-x-4">
+          <!-- 搜索框 -->
+          <div class="relative hidden md:block">
+            <input 
+              type="text" 
+              placeholder="搜索游戏、资讯..." 
+              class="w-64 py-2 pl-10 pr-4 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+            />
+            <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          
+          <!-- 主题切换 -->
+          <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors duration-300">
+            <i class="fa fa-moon-o dark:hidden"></i>
+            <i class="fa fa-sun-o hidden dark:block"></i>
+          </button>
+          
+          <!-- 购物车 -->
+          <a href="#store" class="p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors duration-300 relative">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+          </a>
+          
+          <!-- 用户头像 -->
+          <div class="relative">
+            <div class="flex items-center space-x-2">
+              <!-- 头像 - 点击更换头像 -->
+              <button id="avatar-button" class="focus:outline-none">
+                <img 
+                  src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%20profile&image_size=square" 
+                  alt="用户头像" 
+                  class="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+                />
+              </button>
+              <!-- 用户名和个人中心按钮 -->
+              <div class="flex items-center space-x-1">
+                <span class="hidden md:inline font-medium">用户名</span>
+                <button id="user-menu-button" class="focus:outline-none">
+                  <i class="fa fa-caret-down text-gray-500"></i>
+                </button>
+              </div>
             </div>
+          </div>
+          
+          <!-- 移动端菜单按钮 -->
+          <button class="md:hidden p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors duration-300">
+            <i class="fa fa-bars"></i>
+          </button>
         </div>
-
-       <!-- 游戏库板块 -->
-        <section class="game-library">
-            <h2 class="section-title">游戏库</h2>
-            <div class="game-filter">
-                <button class="filter-btn active">全部游戏</button>
-                <button class="filter-btn">端游</button>
-                <button class="filter-btn">手游</button>
-                <button class="filter-btn">独立游戏</button>
-                <button class="filter-btn">休闲小游戏</button>
-                <button class="filter-btn">热门推荐</button>
-                <button class="filter-btn">最新上线</button>
-            </div&gt;
-            &lt;div class="game-list"&gt;
-                <!-- 游戏卡片1 -->
-                <div class="game-card">
-                    <div class="game-img">游戏封面</div>
-                    <div class="game-info">
-                        <div class="game-name">星空冒险：未知边界</div>
-                        <div class="game-meta">
-                            <span class="game-score">9.2</span>
-                            <span class="game-community"><i class="fas fa-comments"></i>1.2万</span>
-                        </div>
-                        <div class="game-btn">
-                            <a href="#" class="play-btn">立即游玩</a>
-                            <a href="#" class="community-link">社区</a>
-                        </div>
-                    </div>
-                </div&gt;
-                <!-- 游戏卡片2 -->
-                <div class="game-card">
-                    <div class="game-img">游戏封面</div>
-                    <div class="game-info">
-                        <div class="game-name">幻想大陆：王者归来</div>
-                        <div class="game-meta">
-                            <span class="game-score">8.8</span>
-                            <span class="game-community"><i class="fas fa-comments"></i>8600+</span>
-                        </div>
-                        <div class="game-btn">
-                            <a href="#" class="play-btn">立即游玩</a>
-                            <a href="#" class="community-link">社区</a>
-                        </div>
-                    </div>
-                </div><!-- 游戏卡片3 -->
-                <div class="game-card">
-                    <div class="game-img">游戏封面</div>
-                    <div class="game-info">
-                        <div class="game-name">像素生存：荒野求生</div>
-                        <div class="game-meta">
-                            <span class="game-score">9.0</span>
-                            <span class="game-community"><i class="fas fa-comments"></i>1.5万</span>
-                        </div>
-                        <div class="game-btn">
-                            <a href="#" class="play-btn">立即游玩</a>
-                            <a href="#" class="community-link">社区</a>
-                        </div>
-                    </div>
-                </div&gt;
-                <!-- 游戏卡片4 -->
-                <div class="game-card">
-                    <div class="game-img">游戏封面</div>
-                    <div class="game-info">
-                        <div class="game-name">极速狂飙：极限赛道</div>
-                        <div class="game-meta">
-                            <span class="game-score">8.5</span>
-                            <span class="game-community"><i class="fas fa-comments"></i>7200+</span>
-                        </div>
-                        <div class="game-btn">
-                            <a href="#" class="play-btn">立即游玩</a>
-                            <a href="#" class="community-link">社区</a>
-                        </div>
-                    </div>
-                </div&gt;
-                <!-- 游戏卡片5 -->
-                <div class="game-card">
-                    <div class="game-img">游戏封面</div>
-                    <div class="game-info">
-                        <div class="game-name">策略三国：逐鹿中原</div>
-                        <div class="game-meta">
-                            <span class="game-score">8.7</span>
-                            <span class="game-community"><i class="fas fa-comments"></i>9500+</span>
-                        </div>
-                        <div class="game-btn">
-                            <a href="#" class="play-btn">立即游玩</a>
-                            <a href="#" class="community-link">社区</a>
-                        </div>
-                    </div>
-                </div&gt;
-                <!-- 游戏卡片6 -->
-                <div class="game-card">
-                    <div class="game-img">游戏封面</div>
-                    <div class="game-info">
-                        <div class="game-name">治愈小镇：慢生活</div>
-                        <div class="game-meta">
-                            <span class="game-score">9.3</span>
-                            <span class="game-community"><i class="fas fa-comments"></i>1.8万</span>
-                        </div>
-                        <div class="game-btn">
-                            <a href="#" class="play-btn">立即游玩</a>
-                            <a href="#" class="community-link">社区</a>
-                        </div>
-                    </div>
-                </div>
-            &lt;/div&gt;
-        &lt;/section&gt;
-
-        <!-- 社区板块 -->
-        <section class="community-section">
-            <h2 class="section-title">玩家社区</h2>
-            <div class="community-content">
-                <div class="community-left"&gt;
-                    <!-- 社区帖子1 -->
-                    <div class="post-card">
-                        <div class="post-header">
-                            <div class="user-avatar"></div>
-                            <div class="user-info">
-                                <div class="user-name">游戏爱好者001</div>
-                                <div class="post-time">2小时前</div>
-                            </div>
-                        </div>
-                        <div class="post-title">《星空冒险》新手必看攻略，快速上手不踩坑！</div>
-                        <span class="post-game">关联游戏：星空冒险：未知边界</span>
-                        <div class="post-content">
-                            刚入手《星空冒险》的新手玩家看过来！整理了一份详细的新手攻略，包含初始角色选择、资源获取、副本技巧，帮你快速度过前期，少走弯路...
-                        </div>
-                        <div class="post-opt">
-                            <span><i class="fas fa-thumbs-up"></i> 238</span>
-                            <span><i class="fas fa-comment"></i> 56</span>
-                            <span><i class="fas fa-bookmark"></i> 收藏</span>
-                            <span><i class="fas fa-share"></i> 分享</span>
-                        </div>
-                    </div>
-                    <!-- 社区帖子2 -->
-                    <div class="post-card">
-                        <div class="post-header">
-                            <div class="user-avatar"></div>
-                            <div class="user-info">
-                                <div class="user-name">硬核玩家阿凯</div>
-                                <div class="post-time">6小时前</div>
-                            </div>
-                        </div>
-                        <div class="post-title">《幻想大陆》新版本测评：新增玩法太香了！</div>
-                        <span class="post-game">关联游戏：幻想大陆：王者归来</span>
-                        <div class="post-content">
-                            期待已久的《幻想大陆》新版本终于上线了！新增了3个职业、2个副本，平衡调整也很到位，实测体验下来手感拉满，给大家详细说说新版本的亮点和槽点...
-                        </div>
-                        <div class="post-opt">
-                            <span><i class="fas fa-thumbs-up"></i> 452</span>
-                            <span><i class="fas fa-comment"></i> 128</span>
-                            <span><i class="fas fa-bookmark"></i> 收藏</span>
-                            <span><i class="fas fa-share"></i> 分享</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="community-right">
-                    <div class="community-hot">
-                        <h3 class="hot-title">热门游戏社区</h3>
-                        <div class="hot-game">
-                            <div class="hot-game-img"></div>
-                            <div class="hot-game-info">
-                                <div class="hot-game-name">治愈小镇：慢生活</div>
-                                <div class="hot-game-count">2.3万玩家在讨论</div>
-                            </div>
-                        </div>
-                        <div class="hot-game">
-                            <div class="hot-game-img"></div>
-                            <div class="hot-game-info">
-                                <div class="hot-game-name">星空冒险：未知边界</div>
-                                <div class="hot-game-count">1.2万玩家在讨论</div>
-                            </div>
-                        </div>
-                        <div class="hot-game">
-                            <div class="hot-game-img"></div>
-                            <div class="hot-game-info">
-                                <div class="hot-game-name">像素生存：荒野求生</div>
-                                <div class="hot-game-count">1.5万玩家在讨论</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="community-hot">
-                        <h3 class="hot-title">今日话题</h3>
-                        <div class="post-content">
-                            你心中最被低估的独立游戏是什么？分享你的看法，抽3人送游戏礼包！
-                        </div>
-                        <div class="post-opt" style="margin-top: 15px;">
-                            <span><i class="fas fa-comment"></i> 参与讨论 (328)</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+      </div>
     </div>
+  </nav>
 
-<!-- 底部 -->
-    <footer class="footer">
-        <div class="container footer-content">
-            <div class="footer-col">
-                <h3>关于我们</h3>
-                <ul>
-                    <li><a href="#">平台介绍</a></li>
-                    <li><a href="#">联系方式</a></li>
-                    <li><a href="#">加入我们</a></li>
-                </ul>
+  <!-- 主内容区 -->
+  <main class="pt-20">
+    <!-- 首页 -->
+    <section id="home" class="container mx-auto px-4 py-8 fade-in">
+      <!-- 轮播图 -->
+      <div class="relative rounded-2xl overflow-hidden mb-12 h-[400px] md:h-[500px]">
+        <div class="carousel-container relative h-full">
+          <!-- 轮播项 1 -->
+          <div class="carousel-item absolute inset-0 transition-all duration-1500 opacity-100">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-purple-900/80 z-10"></div>
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20banner%20modern%20sci-fi&image_size=landscape_16_9" 
+              alt="游戏 banner" 
+              class="absolute inset-0 w-full h-full object-cover animate-zoom-in"
+            />
+            <div class="relative z-20 flex flex-col justify-center h-full px-6 md:px-12">
+              <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 text-shadow animate-fade-in">
+                探索游戏世界
+              </h1>
+              <p class="text-xl md:text-2xl text-gray-100 mb-8 max-w-2xl animate-slide-up" style="animation-delay: 0.2s;">
+                发现最新、最热门的游戏，与全球玩家一起享受游戏乐趣
+              </p>
+              <div class="flex flex-wrap gap-4 animate-slide-up" style="animation-delay: 0.4s;">
+                <a href="#games" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full text-white font-medium btn-hover">
+                  浏览游戏库
+                </a>
+                <a href="#community" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full text-white font-medium border border-white/30 btn-hover">
+                  加入社区
+                </a>
+              </div>
             </div>
-            <div class="footer-col">
-                <h3>玩家服务</h3>
-                <ul>
-                    <li><a href="#">帮助中心</a></li>
-                    <li><a href="#">意见反馈</a></li>
-                    <li><a href="#">账号安全</a></li>
-                </ul>
+          </div>
+          
+          <!-- 轮播项 2 -->
+          <div class="carousel-item absolute inset-0 transition-all duration-1500 opacity-0">
+            <div class="absolute inset-0 bg-gradient-to-r from-red-900/80 to-orange-900/80 z-10"></div>
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20banner%20action%20adventure&image_size=landscape_16_9" 
+              alt="游戏 banner 2" 
+              class="absolute inset-0 w-full h-full object-cover animate-zoom-in"
+            />
+            <div class="relative z-20 flex flex-col justify-center h-full px-6 md:px-12">
+              <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 text-shadow animate-fade-in">
+                体验极致冒险
+              </h1>
+              <p class="text-xl md:text-2xl text-gray-100 mb-8 max-w-2xl animate-slide-up" style="animation-delay: 0.2s;">
+                踏上史诗般的旅程，挑战极限，成为游戏传奇
+              </p>
+              <div class="flex flex-wrap gap-4 animate-slide-up" style="animation-delay: 0.4s;">
+                <a href="#games" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full text-white font-medium btn-hover">
+                  立即探索
+                </a>
+                <a href="#news" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full text-white font-medium border border-white/30 btn-hover">
+                  了解更多
+                </a>
+              </div>
             </div>
-            <div class="footer-col">
-                <h3>开发者服务</h3>
-                <ul>
-                    <li><a href="#">入驻指南</a></li>
-                    <li><a href="#">游戏上架</a></li>
-                    <li><a href="#">数据统计</a></li>
-                </ul>
+          </div>
+          
+          <!-- 轮播项 3 -->
+          <div class="carousel-item absolute inset-0 transition-all duration-1500 opacity-0">
+            <div class="absolute inset-0 bg-gradient-to-r from-green-900/80 to-teal-900/80 z-10"></div>
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20banner%20fantasy%20rpg&image_size=landscape_16_9" 
+              alt="游戏 banner 3" 
+              class="absolute inset-0 w-full h-full object-cover animate-zoom-in"
+            />
+            <div class="relative z-20 flex flex-col justify-center h-full px-6 md:px-12">
+              <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 text-shadow animate-fade-in">
+                创造你的传奇
+              </h1>
+              <p class="text-xl md:text-2xl text-gray-100 mb-8 max-w-2xl animate-slide-up" style="animation-delay: 0.2s;">
+                在充满魔法与奇迹的世界中，书写属于你的故事
+              </p>
+              <div class="flex flex-wrap gap-4 animate-slide-up" style="animation-delay: 0.4s;">
+                <a href="#games" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full text-white font-medium btn-hover">
+                  开始冒险
+                </a>
+                <a href="#community" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full text-white font-medium border border-white/30 btn-hover">
+                  加入公会
+                </a>
+              </div>
             </div>
-            <div class="footer-col">
-                <h3>法律声明</h3>
-                <ul>
-                    <li><a href="#">用户协议</a></li>
-                    <li><a href="#">隐私政策</a></li>
-                    <li><a href="#">版权声明</a></li>
-                </ul>
-            </div>
+          </div>
         </div>
-        <div class="container copyright">
-            © 2026 游戏枢纽 版权所有 | 京ICP备12345678号
+        <div class="absolute bottom-4 right-4 z-20 flex space-x-2">
+          <button class="carousel-dot w-3 h-3 rounded-full bg-white opacity-100" data-index="0"></button>
+          <button class="carousel-dot w-3 h-3 rounded-full bg-white opacity-50" data-index="1"></button>
+          <button class="carousel-dot w-3 h-3 rounded-full bg-white opacity-50" data-index="2"></button>
         </div>
-    </footer>
+      </div>
 
-    <script>
-        // 简单交互：筛选按钮切换激活状态
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
+      <!-- 热门游戏 -->
+      <section class="mb-16">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl md:text-3xl font-bold">热门游戏</h2>
+          <a href="#games" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">查看全部</a>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <div class="relative">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%201&image_size=landscape_16_9" 
+                alt="游戏封面" 
+                class="w-full h-48 object-cover"
+              />
+              <div class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                热门
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-semibold">游戏标题 1</h3>
+                <div class="flex items-center">
+                  <i class="fa fa-star text-yellow-400 mr-1"></i>
+                  <span>8.8</span>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1 mb-3">
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  动作
+                </span>
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  冒险
+                </span>
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  开放世界
+                </span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-green-600 dark:text-green-400 font-bold">¥109.00</span>
+                <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                  购买
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <div class="relative">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%202&image_size=landscape_16_9" 
+                alt="游戏封面" 
+                class="w-full h-48 object-cover"
+              />
+              <div class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                热门
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-semibold">游戏标题 2</h3>
+                <div class="flex items-center">
+                  <i class="fa fa-star text-yellow-400 mr-1"></i>
+                  <span>8.6</span>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1 mb-3">
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  动作
+                </span>
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  冒险
+                </span>
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  开放世界
+                </span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-green-600 dark:text-green-400 font-bold">¥119.00</span>
+                <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                  购买
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <div class="relative">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%203&image_size=landscape_16_9" 
+                alt="游戏封面" 
+                class="w-full h-48 object-cover"
+              />
+              <div class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                热门
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-semibold">游戏标题 3</h3>
+                <div class="flex items-center">
+                  <i class="fa fa-star text-yellow-400 mr-1"></i>
+                  <span>8.4</span>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1 mb-3">
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  动作
+                </span>
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  冒险
+                </span>
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  开放世界
+                </span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-green-600 dark:text-green-400 font-bold">¥129.00</span>
+                <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                  购买
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <div class="relative">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%204&image_size=landscape_16_9" 
+                alt="游戏封面" 
+                class="w-full h-48 object-cover"
+              />
+              <div class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                热门
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-lg font-semibold">游戏标题 4</h3>
+                <div class="flex items-center">
+                  <i class="fa fa-star text-yellow-400 mr-1"></i>
+                  <span>8.2</span>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1 mb-3">
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  动作
+                </span>
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  冒险
+                </span>
+                <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                  开放世界
+                </span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-green-600 dark:text-green-400 font-bold">¥139.00</span>
+                <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                  购买
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        // 模拟登录按钮点击提示
-        const loginBtn = document.querySelector('.login-btn');
-        loginBtn.addEventListener('click', () => {
-            alert('登录/注册功能待开发，原型仅展示界面');
+      <!-- 最新资讯 -->
+      <section class="mb-16">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl md:text-3xl font-bold">最新资讯</h2>
+          <a href="#news" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">查看全部</a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20news%20image%201&image_size=landscape_16_9" 
+              alt="资讯图片" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-4">
+              <div class="flex items-center mb-2">
+                <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-05</span>
+                <span class="mx-2 text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">游戏新闻</span>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">游戏资讯标题 1</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
+                这是一条关于游戏的最新资讯，包含了游戏的最新动态、更新内容和相关信息。
+              </p>
+              <a href="#news-detail" class="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium">
+                阅读更多 <i class="fa fa-arrow-right ml-1"></i>
+              </a>
+            </div>
+          </div>
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20news%20image%202&image_size=landscape_16_9" 
+              alt="资讯图片" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-4">
+              <div class="flex items-center mb-2">
+                <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-10</span>
+                <span class="mx-2 text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">游戏新闻</span>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">游戏资讯标题 2</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
+                这是一条关于游戏的最新资讯，包含了游戏的最新动态、更新内容和相关信息。
+              </p>
+              <a href="#news-detail" class="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium">
+                阅读更多 <i class="fa fa-arrow-right ml-1"></i>
+              </a>
+            </div>
+          </div>
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20news%20image%203&image_size=landscape_16_9" 
+              alt="资讯图片" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-4">
+              <div class="flex items-center mb-2">
+                <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-15</span>
+                <span class="mx-2 text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">游戏新闻</span>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">游戏资讯标题 3</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
+                这是一条关于游戏的最新资讯，包含了游戏的最新动态、更新内容和相关信息。
+              </p>
+              <a href="#news-detail" class="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium">
+                阅读更多 <i class="fa fa-arrow-right ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 社区动态 -->
+      <section class="mb-16">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl md:text-3xl font-bold">社区动态</h2>
+          <a href="#community" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">查看全部</a>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- 左侧：热门帖子 -->
+          <div class="lg:col-span-2">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+              <h3 class="text-xl font-semibold mb-4">热门帖子</h3>
+              <div class="space-y-4">
+                <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+                  <div class="flex items-start">
+                    <img 
+                      src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%201&image_size=square" 
+                      alt="用户头像" 
+                      class="w-10 h-10 rounded-full mr-3"
+                    />
+                    <div class="flex-1">
+                      <div class="flex items-center mb-1">
+                        <h4 class="font-medium mr-2">用户1</h4>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-07</span>
+                      </div>
+                      <h5 class="font-semibold mb-2">帖子标题 1：关于游戏的讨论</h5>
+                      <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
+                        这是一个关于游戏的讨论帖子，内容非常有趣，吸引了很多玩家参与讨论。
+                      </p>
+                      <div class="flex items-center space-x-4">
+                        <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          <i class="fa fa-thumbs-up mr-1"></i>
+                          <span>120</span>
+                        </button>
+                        <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          <i class="fa fa-comment mr-1"></i>
+                          <span>25</span>
+                        </button>
+                        <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          <i class="fa fa-share mr-1"></i>
+                          <span>分享</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+                  <div class="flex items-start">
+                    <img 
+                      src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%202&image_size=square" 
+                      alt="用户头像" 
+                      class="w-10 h-10 rounded-full mr-3"
+                    />
+                    <div class="flex-1">
+                      <div class="flex items-center mb-1">
+                        <h4 class="font-medium mr-2">用户2</h4>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-14</span>
+                      </div>
+                      <h5 class="font-semibold mb-2">帖子标题 2：关于游戏的讨论</h5>
+                      <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
+                        这是一个关于游戏的讨论帖子，内容非常有趣，吸引了很多玩家参与讨论。
+                      </p>
+                      <div class="flex items-center space-x-4">
+                        <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          <i class="fa fa-thumbs-up mr-1"></i>
+                          <span>140</span>
+                        </button>
+                        <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          <i class="fa fa-comment mr-1"></i>
+                          <span>30</span>
+                        </button>
+                        <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          <i class="fa fa-share mr-1"></i>
+                          <span>分享</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="last:border-0 last:pb-0">
+                  <div class="flex items-start">
+                    <img 
+                      src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%203&image_size=square" 
+                      alt="用户头像" 
+                      class="w-10 h-10 rounded-full mr-3"
+                    />
+                    <div class="flex-1">
+                      <div class="flex items-center mb-1">
+                        <h4 class="font-medium mr-2">用户3</h4>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-21</span>
+                      </div>
+                      <h5 class="font-semibold mb-2">帖子标题 3：关于游戏的讨论</h5>
+                      <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
+                        这是一个关于游戏的讨论帖子，内容非常有趣，吸引了很多玩家参与讨论。
+                      </p>
+                      <div class="flex items-center space-x-4">
+                        <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          <i class="fa fa-thumbs-up mr-1"></i>
+                          <span>160</span>
+                        </button>
+                        <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          <i class="fa fa-comment mr-1"></i>
+                          <span>35</span>
+                        </button>
+                        <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          <i class="fa fa-share mr-1"></i>
+                          <span>分享</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 右侧：热门话题和活跃用户 -->
+          <div class="space-y-6">
+            <!-- 热门话题 -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+              <h3 class="text-xl font-semibold mb-4">热门话题</h3>
+              <ul class="space-y-3">
+                <li class="flex items-center justify-between">
+                  <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">游戏更新</a>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    100
+                  </span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">攻略分享</a>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    120
+                  </span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">bug反馈</a>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    140
+                  </span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">活动讨论</a>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    160
+                  </span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">组队招募</a>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    180
+                  </span>
+                </li>
+              </ul>
+            </div>
+            
+            <!-- 活跃用户 -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+              <h3 class="text-xl font-semibold mb-4">活跃用户</h3>
+              <ul class="space-y-3">
+                <li class="flex items-center">
+                  <img 
+                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%201&image_size=square" 
+                    alt="用户头像" 
+                    class="w-10 h-10 rounded-full mr-3"
+                  />
+                  <div>
+                    <div class="flex items-center">
+                      <span class="font-medium">用户1</span>
+                      <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                        活跃
+                      </span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 text-xs">发帖数: 10</p>
+                  </div>
+                </li>
+                <li class="flex items-center">
+                  <img 
+                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%202&image_size=square" 
+                    alt="用户头像" 
+                    class="w-10 h-10 rounded-full mr-3"
+                  />
+                  <div>
+                    <div class="flex items-center">
+                      <span class="font-medium">用户2</span>
+                      <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                        活跃
+                      </span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 text-xs">发帖数: 20</p>
+                  </div>
+                </li>
+                <li class="flex items-center">
+                  <img 
+                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%203&image_size=square" 
+                    alt="用户头像" 
+                    class="w-10 h-10 rounded-full mr-3"
+                  />
+                  <div>
+                    <div class="flex items-center">
+                      <span class="font-medium">用户3</span>
+                      <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                        活跃
+                      </span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 text-xs">发帖数: 30</p>
+                  </div>
+                </li>
+                <li class="flex items-center">
+                  <img 
+                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%204&image_size=square" 
+                    alt="用户头像" 
+                    class="w-10 h-10 rounded-full mr-3"
+                  />
+                  <div>
+                    <div class="flex items-center">
+                      <span class="font-medium">用户4</span>
+                      <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                        活跃
+                      </span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 text-xs">发帖数: 40</p>
+                  </div>
+                </li>
+                <li class="flex items-center">
+                  <img 
+                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%205&image_size=square" 
+                    alt="用户头像" 
+                    class="w-10 h-10 rounded-full mr-3"
+                  />
+                  <div>
+                    <div class="flex items-center">
+                      <span class="font-medium">用户5</span>
+                      <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                        活跃
+                      </span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 text-xs">发帖数: 50</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <!-- 赛事直播 -->
+      <section class="mb-16">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl md:text-3xl font-bold">赛事直播</h2>
+          <a href="#events" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">查看全部</a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <div class="relative">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=esports%20tournament%201&image_size=landscape_16_9" 
+                alt="赛事直播" 
+                class="w-full h-48 object-cover"
+              />
+              <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+                <i class="fa fa-circle mr-1 text-xs"></i>
+                直播中
+              </div>
+              <div class="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                6000 观看
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold mb-2">赛事名称 1</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+                比赛时间：2024-04-10 19:00
+              </p>
+              <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded text-white text-sm btn-hover">
+                观看直播
+              </button>
+            </div>
+          </div>
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <div class="relative">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=esports%20tournament%202&image_size=landscape_16_9" 
+                alt="赛事直播" 
+                class="w-full h-48 object-cover"
+              />
+              <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+                <i class="fa fa-circle mr-1 text-xs"></i>
+                直播中
+              </div>
+              <div class="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                7000 观看
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold mb-2">赛事名称 2</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+                比赛时间：2024-04-20 19:00
+              </p>
+              <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded text-white text-sm btn-hover">
+                观看直播
+              </button>
+            </div>
+          </div>
+          <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+            <div class="relative">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=esports%20tournament%203&image_size=landscape_16_9" 
+                alt="赛事直播" 
+                class="w-full h-48 object-cover"
+              />
+              <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+                <i class="fa fa-circle mr-1 text-xs"></i>
+                直播中
+              </div>
+              <div class="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                8000 观看
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold mb-2">赛事名称 3</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+                比赛时间：2024-04-30 19:00
+              </p>
+              <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded text-white text-sm btn-hover">
+                观看直播
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- 游戏库页面 -->
+    <section id="games" class="container mx-auto px-4 py-8 fade-in hidden">
+      <h1 class="text-3xl md:text-4xl font-bold mb-8">游戏库</h1>
+      
+      <!-- 筛选和排序 -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 transition-colors duration-300">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <!-- 搜索 -->
+          <div class="relative flex-1">
+            <input 
+              type="text" 
+              placeholder="搜索游戏..." 
+              class="w-full py-3 pl-10 pr-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+            />
+            <i class="fa fa-search absolute left-3 top-3.5 text-gray-400"></i>
+          </div>
+          
+          <!-- 排序 -->
+          <div class="flex items-center space-x-4">
+            <label class="text-sm font-medium">排序：</label>
+            <select class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+              <option>热门程度</option>
+              <option>最新发布</option>
+              <option>价格低到高</option>
+              <option>价格高到低</option>
+              <option>评分</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- 分类标签 -->
+        <div class="mt-6 flex flex-wrap gap-2">
+          <button class="px-4 py-2 rounded-full bg-blue-600 text-white font-medium">全部</button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            动作
+          </button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            冒险
+          </button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            角色扮演
+          </button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            开放世界
+          </button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            射击
+          </button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            策略
+          </button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            模拟
+          </button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            休闲
+          </button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            竞速
+          </button>
+          <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+            恐怖
+          </button>
+        </div>
+      </div>
+      
+      <!-- 游戏列表 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%201&image_size=landscape_16_9" 
+              alt="游戏封面" 
+              class="w-full h-48 object-cover"
+            />
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-semibold">游戏标题 1</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>8.9</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                动作
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                冒险
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                开放世界
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-green-600 dark:text-green-400 font-bold">¥109.00</span>
+              <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                购买
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%202&image_size=landscape_16_9" 
+              alt="游戏封面" 
+              class="w-full h-48 object-cover"
+            />
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-semibold">游戏标题 2</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>8.8</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                动作
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                冒险
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                开放世界
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-green-600 dark:text-green-400 font-bold">¥119.00</span>
+              <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                购买
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%203&image_size=landscape_16_9" 
+              alt="游戏封面" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
+              新品
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-semibold">游戏标题 3</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>8.7</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                动作
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                冒险
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                开放世界
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-green-600 dark:text-green-400 font-bold">¥129.00</span>
+              <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                购买
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%204&image_size=landscape_16_9" 
+              alt="游戏封面" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 left-3 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">
+              折扣
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-semibold">游戏标题 4</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>8.6</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                动作
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                冒险
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                开放世界
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-green-600 dark:text-green-400 font-bold">¥139.00</span>
+              <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                购买
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%205&image_size=landscape_16_9" 
+              alt="游戏封面" 
+              class="w-full h-48 object-cover"
+            />
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-semibold">游戏标题 5</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>8.5</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                动作
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                冒险
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                开放世界
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-green-600 dark:text-green-400 font-bold">¥149.00</span>
+              <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                购买
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%206&image_size=landscape_16_9" 
+              alt="游戏封面" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
+              新品
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-semibold">游戏标题 6</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>8.4</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                动作
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                冒险
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                开放世界
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-green-600 dark:text-green-400 font-bold">¥159.00</span>
+              <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                购买
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%207&image_size=landscape_16_9" 
+              alt="游戏封面" 
+              class="w-full h-48 object-cover"
+            />
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-semibold">游戏标题 7</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>8.3</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                动作
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                冒险
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                开放世界
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-green-600 dark:text-green-400 font-bold">¥169.00</span>
+              <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                购买
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%208&image_size=landscape_16_9" 
+              alt="游戏封面" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 left-3 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">
+              折扣
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-semibold">游戏标题 8</h3>
+              <div class="flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-1"></i>
+                <span>8.2</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                动作
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                冒险
+              </span>
+              <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-800 dark:text-gray-200">
+                开放世界
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-green-600 dark:text-green-400 font-bold">¥179.00</span>
+              <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm btn-hover">
+                购买
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 分页 -->
+      <div class="flex justify-center mt-12">
+        <nav class="flex items-center space-x-2">
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">
+            <i class="fa fa-chevron-left"></i>
+          </button>
+          <button class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center">1</button>
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">2</button>
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">3</button>
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">
+            <i class="fa fa-chevron-right"></i>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- 资讯页面 -->
+    <section id="news" class="container mx-auto px-4 py-8 fade-in hidden">
+      <h1 class="text-3xl md:text-4xl font-bold mb-8">游戏资讯</h1>
+      
+      <!-- 分类标签 -->
+      <div class="flex flex-wrap gap-2 mb-8">
+        <button class="px-4 py-2 rounded-full bg-blue-600 text-white font-medium">全部</button>
+        <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+          游戏新闻
+        </button>
+        <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+          行业动态
+        </button>
+        <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+          攻略指南
+        </button>
+        <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+          评测
+        </button>
+        <button class="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300">
+          活动
+        </button>
+      </div>
+      
+      <!-- 资讯列表 -->
+      <div class="space-y-8">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors duration-300">
+          <div class="md:flex">
+            <div class="md:w-1/3">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20news%20image%201&image_size=landscape_16_9" 
+                alt="资讯图片" 
+                class="w-full h-48 md:h-full object-cover"
+              />
+            </div>
+            <div class="p-6 md:w-2/3">
+              <div class="flex items-center mb-3">
+                <span class="text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded">
+                  游戏新闻
+                </span>
+                <span class="mx-2 text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-05</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-3">资讯标题 1：游戏行业最新动态</h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                这是一条关于游戏行业的最新资讯，包含了游戏的最新动态、更新内容和相关信息。这条资讯详细介绍了游戏行业的发展趋势和未来展望。
+              </p>
+              <a href="#news-detail" class="text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors duration-300">
+          <div class="md:flex">
+            <div class="md:w-1/3">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20news%20image%202&image_size=landscape_16_9" 
+                alt="资讯图片" 
+                class="w-full h-48 md:h-full object-cover"
+              />
+            </div>
+            <div class="p-6 md:w-2/3">
+              <div class="flex items-center mb-3">
+                <span class="text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded">
+                  游戏新闻
+                </span>
+                <span class="mx-2 text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-10</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-3">资讯标题 2：游戏行业最新动态</h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                这是一条关于游戏行业的最新资讯，包含了游戏的最新动态、更新内容和相关信息。这条资讯详细介绍了游戏行业的发展趋势和未来展望。
+              </p>
+              <a href="#news-detail" class="text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors duration-300">
+          <div class="md:flex">
+            <div class="md:w-1/3">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20news%20image%203&image_size=landscape_16_9" 
+                alt="资讯图片" 
+                class="w-full h-48 md:h-full object-cover"
+              />
+            </div>
+            <div class="p-6 md:w-2/3">
+              <div class="flex items-center mb-3">
+                <span class="text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded">
+                  游戏新闻
+                </span>
+                <span class="mx-2 text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-15</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-3">资讯标题 3：游戏行业最新动态</h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                这是一条关于游戏行业的最新资讯，包含了游戏的最新动态、更新内容和相关信息。这条资讯详细介绍了游戏行业的发展趋势和未来展望。
+              </p>
+              <a href="#news-detail" class="text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors duration-300">
+          <div class="md:flex">
+            <div class="md:w-1/3">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20news%20image%204&image_size=landscape_16_9" 
+                alt="资讯图片" 
+                class="w-full h-48 md:h-full object-cover"
+              />
+            </div>
+            <div class="p-6 md:w-2/3">
+              <div class="flex items-center mb-3">
+                <span class="text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded">
+                  游戏新闻
+                </span>
+                <span class="mx-2 text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-20</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-3">资讯标题 4：游戏行业最新动态</h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                这是一条关于游戏行业的最新资讯，包含了游戏的最新动态、更新内容和相关信息。这条资讯详细介绍了游戏行业的发展趋势和未来展望。
+              </p>
+              <a href="#news-detail" class="text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors duration-300">
+          <div class="md:flex">
+            <div class="md:w-1/3">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20news%20image%205&image_size=landscape_16_9" 
+                alt="资讯图片" 
+                class="w-full h-48 md:h-full object-cover"
+              />
+            </div>
+            <div class="p-6 md:w-2/3">
+              <div class="flex items-center mb-3">
+                <span class="text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded">
+                  游戏新闻
+                </span>
+                <span class="mx-2 text-gray-300 dark:text-gray-600">•</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-25</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-3">资讯标题 5：游戏行业最新动态</h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                这是一条关于游戏行业的最新资讯，包含了游戏的最新动态、更新内容和相关信息。这条资讯详细介绍了游戏行业的发展趋势和未来展望。
+              </p>
+              <a href="#news-detail" class="text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 分页 -->
+      <div class="flex justify-center mt-12">
+        <nav class="flex items-center space-x-2">
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">
+            <i class="fa fa-chevron-left"></i>
+          </button>
+          <button class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center">1</button>
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">2</button>
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">3</button>
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">
+            <i class="fa fa-chevron-right"></i>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- 社区页面 -->
+    <section id="community" class="container mx-auto px-4 py-8 fade-in hidden">
+      <h1 class="text-3xl md:text-4xl font-bold mb-8">社区</h1>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- 左侧：导航和发布 -->
+        <div class="lg:col-span-1">
+          <!-- 社区导航 -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors duration-300">
+            <h3 class="text-xl font-semibold mb-4">社区导航</h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <div class="flex items-center">
+                    <i class="fa fa-fire mr-3 text-blue-600 dark:text-blue-400"></i>
+                    <span>热门讨论</span>
+                  </div>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    123
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <div class="flex items-center">
+                    <i class="fa fa-clock-o mr-3 text-blue-600 dark:text-blue-400"></i>
+                    <span>最新动态</span>
+                  </div>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    45
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <div class="flex items-center">
+                    <i class="fa fa-star mr-3 text-blue-600 dark:text-blue-400"></i>
+                    <span>精华内容</span>
+                  </div>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    23
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <div class="flex items-center">
+                    <i class="fa fa-trophy mr-3 text-blue-600 dark:text-blue-400"></i>
+                    <span>活动专区</span>
+                  </div>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    12
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <div class="flex items-center">
+                    <i class="fa fa-users mr-3 text-blue-600 dark:text-blue-400"></i>
+                    <span>组队招募</span>
+                  </div>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    67
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <div class="flex items-center">
+                    <i class="fa fa-question-circle mr-3 text-blue-600 dark:text-blue-400"></i>
+                    <span>问题求助</span>
+                  </div>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    89
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <div class="flex items-center">
+                    <i class="fa fa-lightbulb-o mr-3 text-blue-600 dark:text-blue-400"></i>
+                    <span>创意分享</span>
+                  </div>
+                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded-full">
+                    34
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- 发布帖子 -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+            <h3 class="text-xl font-semibold mb-4">发布帖子</h3>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg text-white font-medium btn-hover flex items-center justify-center">
+              <i class="fa fa-pencil mr-2"></i>
+              发布新帖子
+            </button>
+          </div>
+        </div>
+        
+        <!-- 右侧：帖子列表 -->
+        <div class="lg:col-span-3">
+          <!-- 帖子筛选 -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors duration-300">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <!-- 搜索 -->
+              <div class="relative flex-1">
+                <input 
+                  type="text" 
+                  placeholder="搜索帖子..." 
+                  class="w-full py-2 pl-10 pr-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                />
+                <i class="fa fa-search absolute left-3 top-2.5 text-gray-400"></i>
+              </div>
+              
+              <!-- 筛选 -->
+              <div class="flex items-center space-x-4">
+                <label class="text-sm font-medium">筛选：</label>
+                <select class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                  <option>全部</option>
+                  <option>热门</option>
+                  <option>最新</option>
+                  <option>精华</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 帖子列表 -->
+          <div class="space-y-6">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+              <div class="flex items-start">
+                <img 
+                  src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%201&image_size=square" 
+                  alt="用户头像" 
+                  class="w-12 h-12 rounded-full mr-4"
+                />
+                <div class="flex-1">
+                  <div class="flex items-center mb-2">
+                    <h4 class="font-medium mr-2">用户1</h4>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-07</span>
+                    <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                      精华
+                    </span>
+                  </div>
+                  <h5 class="text-xl font-semibold mb-3">帖子标题 1：关于游戏的深度讨论</h5>
+                  <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                    这是一个关于游戏的深度讨论帖子，内容非常丰富和有见地，吸引了很多玩家参与讨论。帖子详细分析了游戏的玩法、剧情和设计，提供了很多有价值的见解。
+                  </p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-6">
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-thumbs-up mr-1"></i>
+                        <span>120</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-comment mr-1"></i>
+                        <span>25</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-share mr-1"></i>
+                        <span>分享</span>
+                      </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded">
+                        讨论
+                      </span>
+                      <button class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-ellipsis-h"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+              <div class="flex items-start">
+                <img 
+                  src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%202&image_size=square" 
+                  alt="用户头像" 
+                  class="w-12 h-12 rounded-full mr-4"
+                />
+                <div class="flex-1">
+                  <div class="flex items-center mb-2">
+                    <h4 class="font-medium mr-2">用户2</h4>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-14</span>
+                    <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                      精华
+                    </span>
+                  </div>
+                  <h5 class="text-xl font-semibold mb-3">帖子标题 2：关于游戏的深度讨论</h5>
+                  <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                    这是一个关于游戏的深度讨论帖子，内容非常丰富和有见地，吸引了很多玩家参与讨论。帖子详细分析了游戏的玩法、剧情和设计，提供了很多有价值的见解。
+                  </p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-6">
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-thumbs-up mr-1"></i>
+                        <span>140</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-comment mr-1"></i>
+                        <span>30</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-share mr-1"></i>
+                        <span>分享</span>
+                      </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded">
+                        讨论
+                      </span>
+                      <button class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-ellipsis-h"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+              <div class="flex items-start">
+                <img 
+                  src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%203&image_size=square" 
+                  alt="用户头像" 
+                  class="w-12 h-12 rounded-full mr-4"
+                />
+                <div class="flex-1">
+                  <div class="flex items-center mb-2">
+                    <h4 class="font-medium mr-2">用户3</h4>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-21</span>
+                    <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                      精华
+                    </span>
+                  </div>
+                  <h5 class="text-xl font-semibold mb-3">帖子标题 3：关于游戏的深度讨论</h5>
+                  <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                    这是一个关于游戏的深度讨论帖子，内容非常丰富和有见地，吸引了很多玩家参与讨论。帖子详细分析了游戏的玩法、剧情和设计，提供了很多有价值的见解。
+                  </p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-6">
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-thumbs-up mr-1"></i>
+                        <span>160</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-comment mr-1"></i>
+                        <span>35</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-share mr-1"></i>
+                        <span>分享</span>
+                      </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded">
+                        讨论
+                      </span>
+                      <button class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-ellipsis-h"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+              <div class="flex items-start">
+                <img 
+                  src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%204&image_size=square" 
+                  alt="用户头像" 
+                  class="w-12 h-12 rounded-full mr-4"
+                />
+                <div class="flex-1">
+                  <div class="flex items-center mb-2">
+                    <h4 class="font-medium mr-2">用户4</h4>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">2024-04-28</span>
+                    <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                      精华
+                    </span>
+                  </div>
+                  <h5 class="text-xl font-semibold mb-3">帖子标题 4：关于游戏的深度讨论</h5>
+                  <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                    这是一个关于游戏的深度讨论帖子，内容非常丰富和有见地，吸引了很多玩家参与讨论。帖子详细分析了游戏的玩法、剧情和设计，提供了很多有价值的见解。
+                  </p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-6">
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-thumbs-up mr-1"></i>
+                        <span>180</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-comment mr-1"></i>
+                        <span>40</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-share mr-1"></i>
+                        <span>分享</span>
+                      </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded">
+                        讨论
+                      </span>
+                      <button class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-ellipsis-h"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+              <div class="flex items-start">
+                <img 
+                  src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%205&image_size=square" 
+                  alt="用户头像" 
+                  class="w-12 h-12 rounded-full mr-4"
+                />
+                <div class="flex-1">
+                  <div class="flex items-center mb-2">
+                    <h4 class="font-medium mr-2">用户5</h4>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">2024-05-05</span>
+                    <span class="ml-2 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                      精华
+                    </span>
+                  </div>
+                  <h5 class="text-xl font-semibold mb-3">帖子标题 5：关于游戏的深度讨论</h5>
+                  <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                    这是一个关于游戏的深度讨论帖子，内容非常丰富和有见地，吸引了很多玩家参与讨论。帖子详细分析了游戏的玩法、剧情和设计，提供了很多有价值的见解。
+                  </p>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-6">
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-thumbs-up mr-1"></i>
+                        <span>200</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-comment mr-1"></i>
+                        <span>45</span>
+                      </button>
+                      <button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-share mr-1"></i>
+                        <span>分享</span>
+                      </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded">
+                        讨论
+                      </span>
+                      <button class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <i class="fa fa-ellipsis-h"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 分页 -->
+          <div class="flex justify-center mt-12">
+            <nav class="flex items-center space-x-2">
+              <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">
+                <i class="fa fa-chevron-left"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center">1</button>
+              <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">2</button>
+              <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">3</button>
+              <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">
+                <i class="fa fa-chevron-right"></i>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- 赛事页面 -->
+    <section id="events" class="container mx-auto px-4 py-8 fade-in hidden">
+      <h1 class="text-3xl md:text-4xl font-bold mb-8">赛事与直播</h1>
+      
+      <!-- 标签切换 -->
+      <div class="flex space-x-2 mb-8">
+        <button class="px-6 py-3 rounded-lg bg-blue-600 text-white font-medium">直播中</button>
+        <button class="px-6 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300">即将开始</button>
+        <button class="px-6 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300">历史赛事</button>
+      </div>
+      
+      <!-- 直播列表 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=esports%20tournament%201&image_size=landscape_16_9" 
+              alt="赛事直播" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+              <i class="fa fa-circle mr-1 text-xs"></i>
+              直播中
+            </div>
+            <div class="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+              6000 观看
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-semibold mb-2">赛事名称 1</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">
+              游戏B 全球总决赛
+            </p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+              比赛时间：2024-04-10 19:00
+            </p>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded text-white text-sm btn-hover">
+              观看直播
+            </button>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=esports%20tournament%202&image_size=landscape_16_9" 
+              alt="赛事直播" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+              <i class="fa fa-circle mr-1 text-xs"></i>
+              直播中
+            </div>
+            <div class="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+              7000 观看
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-semibold mb-2">赛事名称 2</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">
+              游戏A 职业联赛
+            </p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+              比赛时间：2024-04-20 19:00
+            </p>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded text-white text-sm btn-hover">
+              观看直播
+            </button>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=esports%20tournament%203&image_size=landscape_16_9" 
+              alt="赛事直播" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+              <i class="fa fa-circle mr-1 text-xs"></i>
+              直播中
+            </div>
+            <div class="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+              8000 观看
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-semibold mb-2">赛事名称 3</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">
+              游戏B 全球总决赛
+            </p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+              比赛时间：2024-04-30 19:00
+            </p>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded text-white text-sm btn-hover">
+              观看直播
+            </button>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=esports%20tournament%204&image_size=landscape_16_9" 
+              alt="赛事直播" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+              <i class="fa fa-circle mr-1 text-xs"></i>
+              直播中
+            </div>
+            <div class="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+              9000 观看
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-semibold mb-2">赛事名称 4</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">
+              游戏A 职业联赛
+            </p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+              比赛时间：2024-05-01 19:00
+            </p>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded text-white text-sm btn-hover">
+              观看直播
+            </button>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=esports%20tournament%205&image_size=landscape_16_9" 
+              alt="赛事直播" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+              <i class="fa fa-circle mr-1 text-xs"></i>
+              直播中
+            </div>
+            <div class="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+              10000 观看
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-semibold mb-2">赛事名称 5</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">
+              游戏B 全球总决赛
+            </p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+              比赛时间：2024-05-02 19:00
+            </p>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded text-white text-sm btn-hover">
+              观看直播
+            </button>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden card-hover bg-white dark:bg-gray-800 shadow-md transition-colors duration-300">
+          <div class="relative">
+            <img 
+              src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=esports%20tournament%206&image_size=landscape_16_9" 
+              alt="赛事直播" 
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+              <i class="fa fa-circle mr-1 text-xs"></i>
+              直播中
+            </div>
+            <div class="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+              11000 观看
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-semibold mb-2">赛事名称 6</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">
+              游戏A 职业联赛
+            </p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+              比赛时间：2024-05-03 19:00
+            </p>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded text-white text-sm btn-hover">
+              观看直播
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 分页 -->
+      <div class="flex justify-center mt-12">
+        <nav class="flex items-center space-x-2">
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">
+            <i class="fa fa-chevron-left"></i>
+          </button>
+          <button class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center">1</button>
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">2</button>
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">3</button>
+          <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors duration-300">
+            <i class="fa fa-chevron-right"></i>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- 个人中心页面 -->
+    <section id="account" class="container mx-auto px-4 py-8 fade-in hidden">
+      <h1 class="text-3xl md:text-4xl font-bold mb-8">个人中心</h1>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- 左侧：个人信息和导航 -->
+        <div class="lg:col-span-1">
+          <!-- 个人信息 -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 transition-colors duration-300">
+            <div class="flex flex-col items-center">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%20profile&image_size=square" 
+                alt="用户头像" 
+                class="w-24 h-24 rounded-full object-cover mb-4 border-2 border-blue-500"
+              />
+              <h3 class="text-xl font-semibold mb-1">用户名</h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">user@example.com</p>
+              <div class="flex space-x-2">
+                <button id="edit-profile-button" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm btn-hover">
+                  编辑资料
+                </button>
+                <button id="settings-button" class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white text-sm transition-colors duration-300 btn-hover">
+                  设置
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 账户导航 -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+            <h3 class="text-xl font-semibold mb-4">账户导航</h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <i class="fa fa-user mr-3 text-blue-600 dark:text-blue-400"></i>
+                  <span>个人资料</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <i class="fa fa-gamepad mr-3 text-blue-600 dark:text-blue-400"></i>
+                  <span>游戏库</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <i class="fa fa-heart mr-3 text-blue-600 dark:text-blue-400"></i>
+                  <span>愿望单</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <i class="fa fa-history mr-3 text-blue-600 dark:text-blue-400"></i>
+                  <span>游戏历史</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <i class="fa fa-trophy mr-3 text-blue-600 dark:text-blue-400"></i>
+                  <span>成就</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <i class="fa fa-bell mr-3 text-blue-600 dark:text-blue-400"></i>
+                  <span>通知</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <i class="fa fa-credit-card mr-3 text-blue-600 dark:text-blue-400"></i>
+                  <span>钱包</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <i class="fa fa-cog mr-3 text-blue-600 dark:text-blue-400"></i>
+                  <span>设置</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300">
+                  <i class="fa fa-sign-out mr-3 text-blue-600 dark:text-blue-400"></i>
+                  <span>退出登录</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- 右侧：内容区 -->
+        <div class="lg:col-span-3">
+          <!-- 游戏库 -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 transition-colors duration-300">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-semibold">我的游戏库</h3>
+              <div class="flex items-center space-x-4">
+                <label class="text-sm font-medium">排序：</label>
+                <select class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                  <option>最近游玩</option>
+                  <option>游戏名称</option>
+                  <option>安装时间</option>
+                </select>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-gray-50 dark:bg-gray-750 rounded-lg p-4 transition-colors duration-300">
+                <div class="flex items-center">
+                  <img 
+                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%201&image_size=square" 
+                    alt="游戏封面" 
+                    class="w-20 h-20 object-cover rounded mr-4"
+                  />
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-lg mb-1">游戏标题 1</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">最近游玩: 2小时前</p>
+                    <div class="flex gap-2">
+                      <button class="bg-blue-600 hover:bg-blue-700 px-4 py-1 rounded text-white text-sm btn-hover">
+                        启动游戏
+                      </button>
+                      <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded text-gray-900 dark:text-white text-sm transition-colors duration-300 btn-hover">
+                        验证游戏文件
+                      </button>
+                      <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded text-gray-900 dark:text-white text-sm transition-colors duration-300 btn-hover">
+                        设置
+                      </button>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <span class="text-green-600 dark:text-green-400 text-sm font-medium">已安装</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-750 rounded-lg p-4 transition-colors duration-300">
+                <div class="flex items-center">
+                  <img 
+                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%202&image_size=square" 
+                    alt="游戏封面" 
+                    class="w-20 h-20 object-cover rounded mr-4"
+                  />
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-lg mb-1">游戏标题 2</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">最近游玩: 2小时前</p>
+                    <div class="flex gap-2">
+                      <button class="bg-blue-600 hover:bg-blue-700 px-4 py-1 rounded text-white text-sm btn-hover">
+                        启动游戏
+                      </button>
+                      <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded text-gray-900 dark:text-white text-sm transition-colors duration-300 btn-hover">
+                        验证游戏文件
+                      </button>
+                      <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded text-gray-900 dark:text-white text-sm transition-colors duration-300 btn-hover">
+                        设置
+                      </button>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <span class="text-green-600 dark:text-green-400 text-sm font-medium">已安装</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-750 rounded-lg p-4 transition-colors duration-300">
+                <div class="flex items-center">
+                  <img 
+                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%203&image_size=square" 
+                    alt="游戏封面" 
+                    class="w-20 h-20 object-cover rounded mr-4"
+                  />
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-lg mb-1">游戏标题 3</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">最近游玩: 2小时前</p>
+                    <div class="flex gap-2">
+                      <button class="bg-blue-600 hover:bg-blue-700 px-4 py-1 rounded text-white text-sm btn-hover">
+                        启动游戏
+                      </button>
+                      <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded text-gray-900 dark:text-white text-sm transition-colors duration-300 btn-hover">
+                        验证游戏文件
+                      </button>
+                      <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded text-gray-900 dark:text-white text-sm transition-colors duration-300 btn-hover">
+                        设置
+                      </button>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <span class="text-green-600 dark:text-green-400 text-sm font-medium">已安装</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-750 rounded-lg p-4 transition-colors duration-300">
+                <div class="flex items-center">
+                  <img 
+                    src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%204&image_size=square" 
+                    alt="游戏封面" 
+                    class="w-20 h-20 object-cover rounded mr-4"
+                  />
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-lg mb-1">游戏标题 4</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">最近游玩: 2小时前</p>
+                    <div class="flex gap-2">
+                      <button class="bg-blue-600 hover:bg-blue-700 px-4 py-1 rounded text-white text-sm btn-hover">
+                        启动游戏
+                      </button>
+                      <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded text-gray-900 dark:text-white text-sm transition-colors duration-300 btn-hover">
+                        验证游戏文件
+                      </button>
+                      <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-1 rounded text-gray-900 dark:text-white text-sm transition-colors duration-300 btn-hover">
+                        设置
+                      </button>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <span class="text-green-600 dark:text-green-400 text-sm font-medium">已安装</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 最近活动 -->
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+            <h3 class="text-xl font-semibold mb-6">最近活动</h3>
+            <div class="space-y-4">
+              <div class="flex items-start">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-4 flex-shrink-0">
+                  <i class="fa fa-gamepad text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <div>
+                  <p class="text-gray-900 dark:text-white mb-1">
+                    您在 <span class="font-medium">游戏标题 1</span> 中获得了新成就
+                  </p>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm">2024-04-05 14:10</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-4 flex-shrink-0">
+                  <i class="fa fa-gamepad text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <div>
+                  <p class="text-gray-900 dark:text-white mb-1">
+                    您在 <span class="font-medium">游戏标题 2</span> 中获得了新成就
+                  </p>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm">2024-04-10 14:20</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-4 flex-shrink-0">
+                  <i class="fa fa-gamepad text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <div>
+                  <p class="text-gray-900 dark:text-white mb-1">
+                    您在 <span class="font-medium">游戏标题 3</span> 中获得了新成就
+                  </p>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm">2024-04-15 14:30</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-4 flex-shrink-0">
+                  <i class="fa fa-gamepad text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <div>
+                  <p class="text-gray-900 dark:text-white mb-1">
+                    您在 <span class="font-medium">游戏标题 4</span> 中获得了新成就
+                  </p>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm">2024-04-20 14:40</p>
+                </div>
+              </div>
+              <div class="flex items-start">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-4 flex-shrink-0">
+                  <i class="fa fa-gamepad text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <div>
+                  <p class="text-gray-900 dark:text-white mb-1">
+                    您在 <span class="font-medium">游戏标题 5</span> 中获得了新成就
+                  </p>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm">2024-04-25 14:50</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 编辑资料页面 -->
+    <section id="edit-profile" class="container mx-auto px-4 py-8 fade-in hidden">
+      <h1 class="text-3xl md:text-4xl font-bold mb-8">编辑资料</h1>
+      
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-colors duration-300">
+          <!-- 头像上传 -->
+          <div class="flex flex-col items-center mb-8">
+            <div class="relative">
+              <img 
+                id="edit-profile-avatar"
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%20profile&image_size=square" 
+                alt="用户头像" 
+                class="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
+              />
+              <button id="upload-avatar-button" class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full transition-colors duration-300">
+                <i class="fa fa-camera"></i>
+              </button>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400 mt-4 text-sm">点击相机图标更换头像</p>
+          </div>
+          
+          <!-- 表单 -->
+          <form id="edit-profile-form" class="space-y-6">
+            <!-- 用户名 -->
+            <div>
+              <label class="block text-gray-900 dark:text-white font-medium mb-2">用户名</label>
+              <input 
+                type="text" 
+                name="username"
+                value="用户名"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                placeholder="请输入用户名"
+              />
+            </div>
+            
+            <!-- 邮箱 -->
+            <div>
+              <label class="block text-gray-900 dark:text-white font-medium mb-2">邮箱地址</label>
+              <input 
+                type="email" 
+                name="email"
+                value="user@example.com"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                placeholder="请输入邮箱地址"
+              />
+            </div>
+            
+            <!-- 性别 -->
+            <div>
+              <label class="block text-gray-900 dark:text-white font-medium mb-2">性别</label>
+              <select 
+                name="gender"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              >
+                <option value="male">男</option>
+                <option value="female">女</option>
+                <option value="other">其他</option>
+              </select>
+            </div>
+            
+            <!-- 生日 -->
+            <div>
+              <label class="block text-gray-900 dark:text-white font-medium mb-2">生日</label>
+              <input 
+                type="date" 
+                name="birthday"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              />
+            </div>
+            
+            <!-- 个人简介 -->
+            <div>
+              <label class="block text-gray-900 dark:text-white font-medium mb-2">个人简介</label>
+              <textarea 
+                name="bio"
+                rows="4"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 resize-none"
+                placeholder="介绍一下自己..."
+              ></textarea>
+            </div>
+            
+            <!-- 按钮 -->
+            <div class="flex space-x-4">
+              <button 
+                type="submit"
+                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors duration-300"
+              >
+                保存修改
+              </button>
+              <button 
+                type="button"
+                id="cancel-edit-button"
+                class="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white py-3 rounded-lg font-medium transition-colors duration-300"
+              >
+                取消
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 购物车页面 -->
+    <section id="store" class="container mx-auto px-4 py-8 fade-in hidden">
+      <h1 class="text-3xl md:text-4xl font-bold mb-8">购物车</h1>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- 购物车商品列表 -->
+        <div class="lg:col-span-2">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300">
+            <!-- 商品1 -->
+            <div class="flex items-center space-x-4 pb-6 border-b border-gray-200 dark:border-gray-700 mb-6">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%201&image_size=landscape_16_9" 
+                alt="游戏封面" 
+                class="w-24 h-24 object-cover rounded-lg"
+              />
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold mb-2">游戏标题 1</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">动作 · 冒险 · 开放世界</p>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <button class="quantity-minus w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors duration-300">
+                      <i class="fa fa-minus text-sm"></i>
+                    </button>
+                    <span class="quantity-value text-lg font-medium">1</span>
+                    <button class="quantity-plus w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors duration-300">
+                      <i class="fa fa-plus text-sm"></i>
+                    </button>
+                  </div>
+                  <span class="text-green-600 dark:text-green-400 font-bold text-lg">¥109.00</span>
+                </div>
+              </div>
+              <button class="remove-item text-gray-400 hover:text-red-500 transition-colors duration-300">
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+            
+            <!-- 商品2 -->
+            <div class="flex items-center space-x-4 pb-6 border-b border-gray-200 dark:border-gray-700 mb-6">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%202&image_size=landscape_16_9" 
+                alt="游戏封面" 
+                class="w-24 h-24 object-cover rounded-lg"
+              />
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold mb-2">游戏标题 2</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">射击 · 竞技 · 多人</p>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <button class="quantity-minus w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors duration-300">
+                      <i class="fa fa-minus text-sm"></i>
+                    </button>
+                    <span class="quantity-value text-lg font-medium">1</span>
+                    <button class="quantity-plus w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors duration-300">
+                      <i class="fa fa-plus text-sm"></i>
+                    </button>
+                  </div>
+                  <span class="text-green-600 dark:text-green-400 font-bold text-lg">¥89.00</span>
+                </div>
+              </div>
+              <button class="remove-item text-gray-400 hover:text-red-500 transition-colors duration-300">
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+            
+            <!-- 商品3 -->
+            <div class="flex items-center space-x-4 pb-6 border-b border-gray-200 dark:border-gray-700 mb-6">
+              <img 
+                src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=game%20cover%20art%203&image_size=landscape_16_9" 
+                alt="游戏封面" 
+                class="w-24 h-24 object-cover rounded-lg"
+              />
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold mb-2">游戏标题 3</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">角色扮演 · 策略 · 剧情丰富</p>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <button class="quantity-minus w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors duration-300">
+                      <i class="fa fa-minus text-sm"></i>
+                    </button>
+                    <span class="quantity-value text-lg font-medium">1</span>
+                    <button class="quantity-plus w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center transition-colors duration-300">
+                      <i class="fa fa-plus text-sm"></i>
+                    </button>
+                  </div>
+                  <span class="text-green-600 dark:text-green-400 font-bold text-lg">¥129.00</span>
+                </div>
+              </div>
+              <button class="remove-item text-gray-400 hover:text-red-500 transition-colors duration-300">
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 购物车摘要 -->
+        <div class="lg:col-span-1">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-300 sticky top-4">
+            <h3 class="text-xl font-semibold mb-6">订单摘要</h3>
+            
+            <div class="space-y-4 mb-6">
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">商品小计</span>
+                <span class="font-medium">¥327.00</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">运费</span>
+                <span class="font-medium">¥0.00</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">优惠</span>
+                <span class="font-medium text-red-500">-¥0.00</span>
+              </div>
+              <div class="border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-between">
+                <span class="font-semibold">总计</span>
+                <span class="font-bold text-xl text-green-600 dark:text-green-400">¥327.00</span>
+              </div>
+            </div>
+            
+            <div class="space-y-3">
+              <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors duration-300">
+                结账
+              </button>
+              <button class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white py-3 rounded-lg font-medium transition-colors duration-300">
+                继续购物
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 dark:bg-gray-950 text-gray-300 py-12 mt-16">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- 关于我们 -->
+        <div>
+          <h3 class="text-white text-lg font-semibold mb-4">关于我们</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-white transition-colors duration-300">公司简介</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-300">联系我们</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-300">加入我们</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-300">隐私政策</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-300">服务条款</a></li>
+          </ul>
+        </div>
+        
+        <!-- 支持 -->
+        <div>
+          <h3 class="text-white text-lg font-semibold mb-4">支持</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-white transition-colors duration-300">帮助中心</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-300">常见问题</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-300">游戏修复</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-300">技术支持</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-300">反馈建议</a></li>
+          </ul>
+        </div>
+        
+        <!-- 关注我们 -->
+        <div>
+          <h3 class="text-white text-lg font-semibold mb-4">关注我们</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-600 flex items-center justify-center transition-colors duration-300">
+              <i class="fa fa-weibo"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-600 flex items-center justify-center transition-colors duration-300">
+              <i class="fa fa-wechat"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-600 flex items-center justify-center transition-colors duration-300">
+              <i class="fa fa-qq"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-600 flex items-center justify-center transition-colors duration-300">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </div>
+          <p class="mt-4 text-sm">订阅我们的新闻简报</p>
+          <div class="mt-2 flex">
+            <input 
+              type="email" 
+              placeholder="您的邮箱" 
+              class="flex-1 py-2 px-3 rounded-l-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+            />
+            <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-r-lg text-white transition-colors duration-300">
+              订阅
+            </button>
+          </div>
+        </div>
+        
+        <!-- 联系方式 -->
+        <div>
+          <h3 class="text-white text-lg font-semibold mb-4">联系方式</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <i class="fa fa-map-marker mr-3 text-blue-400"></i>
+              <span>北京市朝阳区游戏中心大厦</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fa fa-phone mr-3 text-blue-400"></i>
+              <span>400-123-4567</span>
+            </li>
+            <li class="flex items-center">
+              <i class="fa fa-envelope mr-3 text-blue-400"></i>
+              <span>support@gamecenter.com</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
+        <p>© 2024 游戏中心. 保留所有权利.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 主题切换
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    // 检查本地存储中的主题设置
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // 页面导航
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('nav a');
+
+    // 激活当前导航链接
+    function activateNavLink(targetId) {
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === targetId) {
+          link.classList.add('font-bold', 'text-blue-600', 'dark:text-blue-400');
+        } else {
+          link.classList.remove('font-bold', 'text-blue-600', 'dark:text-blue-400');
+        }
+      });
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href');
+        
+        // 隐藏所有页面
+        sections.forEach(section => {
+          section.classList.add('hidden');
         });
-    </script>
+        
+        // 显示目标页面
+        const targetSection = document.querySelector(targetId);
+        if (targetSection) {
+          targetSection.classList.remove('hidden');
+          // 添加淡入动画
+          targetSection.classList.add('fade-in');
+          // 激活对应导航链接
+          activateNavLink(targetId);
+        }
+      });
+    });
+
+    // 其他链接导航
+    const otherLinks = document.querySelectorAll('a[href^="#"]');
+    otherLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href');
+        
+        // 隐藏所有页面
+        sections.forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        // 显示目标页面
+        const targetSection = document.querySelector(targetId);
+        if (targetSection) {
+          targetSection.classList.remove('hidden');
+          // 添加淡入动画
+          targetSection.classList.add('fade-in');
+          // 激活对应导航链接
+          activateNavLink(targetId);
+        }
+      });
+    });
+
+    // 滚动效果
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) {
+        nav.classList.add('py-2', 'shadow-md');
+        nav.classList.remove('py-4');
+      } else {
+        nav.classList.add('py-4');
+        nav.classList.remove('py-2', 'shadow-md');
+      }
+    });
+
+    // 表单提交处理
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // 这里可以添加表单提交逻辑
+        alert('表单提交成功！');
+      });
+    });
+
+    // 按钮悬停效果增强
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+      button.addEventListener('mouseenter', () => {
+        button.classList.add('transform', 'scale-105');
+      });
+      button.addEventListener('mouseleave', () => {
+        button.classList.remove('transform', 'scale-105');
+      });
+    });
+
+    // 初始化：显示首页并激活对应导航链接
+    document.querySelector('#home').classList.remove('hidden');
+    activateNavLink('#home');
+
+
+
+    // 头像更换交互
+    const avatarButton = document.getElementById('avatar-button');
+    if (avatarButton) {
+      avatarButton.addEventListener('click', () => {
+        // 模拟头像更换功能
+        if (confirm('是否要更换头像？')) {
+          // 创建一个文件输入元素
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/*';
+          
+          // 触发文件选择
+          fileInput.click();
+          
+          // 监听文件选择
+          fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              // 这里可以添加文件上传逻辑
+              alert('头像已更换');
+              // 模拟更新头像
+              const avatarImg = avatarButton.querySelector('img');
+              if (avatarImg) {
+                // 使用新的随机头像
+                const randomId = Math.floor(Math.random() * 1000);
+                avatarImg.src = `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%20profile%20${randomId}&image_size=square`;
+              }
+            }
+          });
+        }
+      });
+    }
+
+    // 用户菜单交互 - 三角图标点击导航到个人中心
+    const userMenuButton = document.getElementById('user-menu-button');
+    if (userMenuButton) {
+      userMenuButton.addEventListener('click', () => {
+        // 隐藏所有页面
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        // 显示个人中心页面
+        const accountSection = document.querySelector('#account');
+        if (accountSection) {
+          accountSection.classList.remove('hidden');
+        }
+        
+        // 激活导航链接
+        activateNavLink('#account');
+      });
+    }
+
+    // 编辑资料按钮交互
+    const editProfileButton = document.getElementById('edit-profile-button');
+    if (editProfileButton) {
+      editProfileButton.addEventListener('click', () => {
+        // 隐藏所有页面
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        // 显示编辑资料页面
+        const editProfileSection = document.querySelector('#edit-profile');
+        if (editProfileSection) {
+          editProfileSection.classList.remove('hidden');
+        }
+      });
+    }
+
+    // 设置按钮交互
+    const settingsButton = document.getElementById('settings-button');
+    if (settingsButton) {
+      settingsButton.addEventListener('click', () => {
+        alert('账户设置页面');
+      });
+    }
+
+    // 上传头像按钮交互
+    const uploadAvatarButton = document.getElementById('upload-avatar-button');
+    if (uploadAvatarButton) {
+      uploadAvatarButton.addEventListener('click', () => {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.click();
+        
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const editProfileAvatar = document.getElementById('edit-profile-avatar');
+            if (editProfileAvatar) {
+              const randomId = Math.floor(Math.random() * 1000);
+              editProfileAvatar.src = `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=user%20avatar%20profile%20${randomId}&image_size=square`;
+            }
+          }
+        });
+      });
+    }
+
+    // 编辑资料表单提交
+    const editProfileForm = document.getElementById('edit-profile-form');
+    if (editProfileForm) {
+      editProfileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('资料已保存');
+        
+        // 返回个人中心页面
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        const accountSection = document.querySelector('#account');
+        if (accountSection) {
+          accountSection.classList.remove('hidden');
+        }
+      });
+    }
+
+    // 取消编辑按钮交互
+    const cancelEditButton = document.getElementById('cancel-edit-button');
+    if (cancelEditButton) {
+      cancelEditButton.addEventListener('click', () => {
+        // 返回个人中心页面
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        const accountSection = document.querySelector('#account');
+        if (accountSection) {
+          accountSection.classList.remove('hidden');
+        }
+      });
+    }
+
+    // 游戏卡片交互
+    const gameCards = document.querySelectorAll('.card-hover');
+    gameCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const gameTitle = card.querySelector('h3')?.textContent || '游戏详情';
+        alert(`${gameTitle} 页面`);
+      });
+    });
+
+    // 资讯卡片交互
+    const newsCards = document.querySelectorAll('#news .bg-white.dark\\:bg-gray-800.rounded-xl.shadow-md.p-6');
+    newsCards.forEach(card => {
+      if (card.querySelector('h3') && !card.querySelector('.card-hover')) {
+        card.addEventListener('click', () => {
+          const newsTitle = card.querySelector('h3').textContent || '资讯详情';
+          alert(`${newsTitle} 页面`);
+        });
+      }
+    });
+
+    // 社区帖子交互
+    const postCards = document.querySelectorAll('#community .bg-white.dark\\:bg-gray-800.rounded-xl.shadow-md.p-6');
+    postCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const postTitle = card.querySelector('h5').textContent || '帖子详情';
+        alert(`${postTitle} 页面`);
+      });
+    });
+
+    // 赛事直播交互
+    const eventCards = document.querySelectorAll('#events .bg-white.dark\\:bg-gray-800.rounded-xl.shadow-md');
+    eventCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const eventTitle = card.querySelector('h3').textContent || '赛事详情';
+        alert(`${eventTitle} 页面`);
+      });
+    });
+
+    // 搜索功能交互
+    const searchInputs = document.querySelectorAll('input[type="text"]');
+    searchInputs.forEach(input => {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const searchTerm = input.value.trim();
+          if (searchTerm) {
+            alert(`搜索：${searchTerm}`);
+          }
+        }
+      });
+    });
+
+    // 分类标签交互
+    const categoryButtons = document.querySelectorAll('.flex.flex-wrap.gap-2 button');
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // 移除其他按钮的激活状态
+        categoryButtons.forEach(btn => {
+          btn.classList.remove('bg-blue-600', 'text-white');
+          btn.classList.add('bg-gray-100', 'dark:bg-gray-700', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
+        });
+        // 激活当前按钮
+        button.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
+        button.classList.add('bg-blue-600', 'text-white');
+        
+        const category = button.textContent.trim();
+        alert(`切换到 ${category} 分类`);
+      });
+    });
+
+    // 分页功能交互
+    const paginationButtons = document.querySelectorAll('.flex.justify-center button');
+    paginationButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const pageText = button.textContent.trim();
+        if (pageText === '«') {
+          alert('上一页');
+        } else if (pageText === '»') {
+          alert('下一页');
+        } else {
+          alert(`切换到第 ${pageText} 页`);
+          // 激活当前页码按钮
+          paginationButtons.forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'text-white');
+            btn.classList.add('bg-gray-100', 'dark:bg-gray-800', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+          });
+          button.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+          button.classList.add('bg-blue-600', 'text-white');
+        }
+      });
+    });
+
+    // 标签切换交互（赛事页面）
+    const eventTabs = document.querySelectorAll('#events .flex.space-x-2 button');
+    eventTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // 移除其他标签的激活状态
+        eventTabs.forEach(t => {
+          t.classList.remove('bg-blue-600', 'text-white');
+          t.classList.add('bg-gray-100', 'dark:bg-gray-800', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+        });
+        // 激活当前标签
+        tab.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+        tab.classList.add('bg-blue-600', 'text-white');
+        
+        const tabText = tab.textContent.trim();
+        alert(`切换到 ${tabText} 标签`);
+      });
+    });
+
+    // 购物车链接交互
+    const cartLink = document.querySelector('a[href="#store"]');
+    if (cartLink) {
+      cartLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        // 隐藏所有页面
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        // 显示购物车页面
+        const storeSection = document.querySelector('#store');
+        if (storeSection) {
+          storeSection.classList.remove('hidden');
+        }
+      });
+    }
+
+    // 购物车数量加减交互
+    const quantityMinusButtons = document.querySelectorAll('.quantity-minus');
+    quantityMinusButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const quantityValue = button.parentElement.querySelector('.quantity-value');
+        let quantity = parseInt(quantityValue.textContent);
+        if (quantity > 1) {
+          quantity--;
+          quantityValue.textContent = quantity;
+        }
+      });
+    });
+
+    const quantityPlusButtons = document.querySelectorAll('.quantity-plus');
+    quantityPlusButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const quantityValue = button.parentElement.querySelector('.quantity-value');
+        let quantity = parseInt(quantityValue.textContent);
+        if (quantity < 10) {
+          quantity++;
+          quantityValue.textContent = quantity;
+        }
+      });
+    });
+
+    // 删除商品交互
+    const removeButtons = document.querySelectorAll('.remove-item');
+    removeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        if (confirm('确定要删除这个商品吗？')) {
+          const item = button.parentElement;
+          item.remove();
+          alert('商品已删除');
+        }
+      });
+    });
+
+    // 结账按钮交互
+    const checkoutButton = document.querySelector('#store .bg-blue-600');
+    if (checkoutButton && checkoutButton.textContent.includes('结账')) {
+      checkoutButton.addEventListener('click', () => {
+        alert('正在跳转到结账页面...');
+      });
+    }
+
+    // 继续购物按钮交互
+    const continueShoppingButton = document.querySelector('#store .bg-gray-100');
+    if (continueShoppingButton && continueShoppingButton.textContent.includes('继续购物')) {
+      continueShoppingButton.addEventListener('click', () => {
+        // 隐藏所有页面
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        // 显示首页
+        const homeSection = document.querySelector('#home');
+        if (homeSection) {
+          homeSection.classList.remove('hidden');
+        }
+      });
+    }
+
+    // 轮播图交互
+    const carouselItems = document.querySelectorAll('.carousel-item');
+    const carouselDots = document.querySelectorAll('.carousel-dot');
+    let currentIndex = 0;
+    const totalItems = carouselItems.length;
+
+    // 自动轮播函数
+    function autoCarousel() {
+      currentIndex = (currentIndex + 1) % totalItems;
+      updateCarousel();
+    }
+
+    // 更新轮播状态
+    function updateCarousel() {
+      // 更新轮播项
+      carouselItems.forEach((item, index) => {
+        if (index === currentIndex) {
+          item.style.opacity = '1';
+        } else {
+          item.style.opacity = '0';
+        }
+      });
+
+      // 更新指示器
+      carouselDots.forEach((dot, index) => {
+        if (index === currentIndex) {
+          dot.style.opacity = '1';
+        } else {
+          dot.style.opacity = '0.5';
+        }
+      });
+    }
+
+    // 点击指示器切换轮播
+    carouselDots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        currentIndex = index;
+        updateCarousel();
+      });
+    });
+
+    // 启动自动轮播
+    setInterval(autoCarousel, 5000);
+  </script>
 </body>
 </html>
